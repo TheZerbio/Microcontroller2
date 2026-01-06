@@ -37,7 +37,18 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_sai_ex.h \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_uart.h \
  ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_uart_ex.h \
- ../Core/Inc/gpio.h ../Core/Inc/main.h
+ ../Core/Inc/gpio.h ../Core/Inc/main.h \
+ C:/Users/Admin/GitHub/Microcontroller2/PlsWork/Drivers/BSP/stm32h735g_discovery.h \
+ C:/Users/Admin/GitHub/Microcontroller2/PlsWork/Drivers/BSP/stm32h735g_discovery_conf.h \
+ C:/Users/Admin/GitHub/Microcontroller2/PlsWork/Drivers/BSP/stm32h735g_discovery_errno.h \
+ C:/Users/Admin/GitHub/Microcontroller2/PlsWork/Drivers/BSP/stm32h735g_discovery_lcd.h \
+ C:/Users/Admin/GitHub/Microcontroller2/PlsWork/Drivers/BSP/Components/Common/lcd.h \
+ C:/Users/Admin/GitHub/Microcontroller2/PlsWork/Drivers/BSP/Components/../Components/rk043fn48h/rk043fn48h.h \
+ C:/Users/Admin/GitHub/Microcontroller2/PlsWork/Drivers/BSP/stm32h735g_discovery_ospi.h \
+ C:/Users/Admin/GitHub/Microcontroller2/PlsWork/Drivers/BSP/Components/../Components/mx25lm51245g/mx25lm51245g.h \
+ C:/Users/Admin/GitHub/Microcontroller2/PlsWork/Drivers/BSP/Components/../Components/mx25lm51245g/mx25lm51245g_conf.h \
+ C:/Users/Admin/GitHub/Microcontroller2/PlsWork/Drivers/BSP/Components/../Components/s70kl1281/s70kl1281.h \
+ C:/Users/Admin/GitHub/Microcontroller2/PlsWork/Drivers/BSP/Components/s70kl1281/s70kl1281_conf.h
 ../Core/Inc/main.h:
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal.h:
 ../Core/Inc/stm32h7xx_hal_conf.h:
@@ -79,3 +90,14 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
 ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_uart_ex.h:
 ../Core/Inc/gpio.h:
 ../Core/Inc/main.h:
+C:/Users/Admin/GitHub/Microcontroller2/PlsWork/Drivers/BSP/stm32h735g_discovery.h:
+C:/Users/Admin/GitHub/Microcontroller2/PlsWork/Drivers/BSP/stm32h735g_discovery_conf.h:
+C:/Users/Admin/GitHub/Microcontroller2/PlsWork/Drivers/BSP/stm32h735g_discovery_errno.h:
+C:/Users/Admin/GitHub/Microcontroller2/PlsWork/Drivers/BSP/stm32h735g_discovery_lcd.h:
+C:/Users/Admin/GitHub/Microcontroller2/PlsWork/Drivers/BSP/Components/Common/lcd.h:
+C:/Users/Admin/GitHub/Microcontroller2/PlsWork/Drivers/BSP/Components/../Components/rk043fn48h/rk043fn48h.h:
+C:/Users/Admin/GitHub/Microcontroller2/PlsWork/Drivers/BSP/stm32h735g_discovery_ospi.h:
+C:/Users/Admin/GitHub/Microcontroller2/PlsWork/Drivers/BSP/Components/../Components/mx25lm51245g/mx25lm51245g.h:
+C:/Users/Admin/GitHub/Microcontroller2/PlsWork/Drivers/BSP/Components/../Components/mx25lm51245g/mx25lm51245g_conf.h:
+C:/Users/Admin/GitHub/Microcontroller2/PlsWork/Drivers/BSP/Components/../Components/s70kl1281/s70kl1281.h:
+C:/Users/Admin/GitHub/Microcontroller2/PlsWork/Drivers/BSP/Components/s70kl1281/s70kl1281_conf.h:

@@ -89,31 +89,25 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   /* USER CODE BEGIN 2 */
-  // 1. Initialize the external OctoSPI RAM (HyperRAM)
-    // The LCD frame buffer is located here, so this must be ready first.
-    if (BSP_OSPI_RAM_Init(0) != BSP_ERROR_NONE)
-    {
-        Error_Handler(); // Stop if RAM fails
-    }
+
 
     // 2. Initialize the LCD
     // Instance 0, Landscape orientation
     BSP_LCD_Init(0, LCD_ORIENTATION_LANDSCAPE);
 
-    // 3. Wait a brief moment for the LCD to stabilize (optional but recommended)
-    HAL_Delay(100);
+    BSP_LCD_Clear(0, LCD_COLOR_BLUE); // Background
 
-    // 4. Turn the Display On
-    BSP_LCD_DisplayOn(0);
+      // 1. Set the drawing color to RED
+      BSP_LCD_SetTextColor(LCD_COLOR_RED);
 
-    // 5. Clear the screen to Blue
-    // The BSP library defines LCD_COLOR_BLUE usually as 0xFF0000FF (ARGB)
-    BSP_LCD_Clear(0, LCD_COLOR_BLUE);
+      // 2. Draw a filled box
+      // Parameters: Instance (0), X_pos, Y_pos, Width, Height
+      BSP_LCD_FillRect(0, 200, 100, 50, 50);
 
-    // Optional: Draw a test string to be sure
-    BSP_LCD_SetBackColor(LCD_COLOR_BLUE);
-    BSP_LCD_SetTextColor(LCD_COLOR_WHITE);
-    BSP_LCD_DisplayStringAt(0, 130, (uint8_t *)"IT WORKS!", CENTER_MODE);
+      // Optional: Draw a White outline around it
+      BSP_LCD_SetTextColor(LCD_COLOR_WHITE);
+      BSP_LCD_DrawRect(0, 200, 100, 50, 50);
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
