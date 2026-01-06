@@ -45,7 +45,12 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
+#define LCD_WIDTH  480
+#define LCD_HEIGHT 272
 
+// Allocate Frame Buffer in internal RAM (AXI SRAM)
+// We align it to 32 bytes for DMA/Cache efficiency
+__attribute__((aligned(32))) uint16_t LCD_FrameBuffer[LCD_WIDTH * LCD_HEIGHT];
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -89,26 +94,10 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   /* USER CODE BEGIN 2 */
+  	BSP_LCD_Init(0,LCD_ORIENTATION_LANDSCAPE);
 
-  // Initialize the LCD instance 0 in Landscape mode
-    if (BSP_LCD_Init(0, LCD_ORIENTATION_LANDSCAPE) != BSP_ERROR_NONE)
-    {
-        Error_Handler(); // Stop if init fails
-    }
-
-
-    // Draw a RED SQUARE
-    // Instance: 0
-    // Xpos: 190, Ypos: 86 (roughly centered)
-    // Width: 100, Height: 100
-    // Color: Red (defined in your header)
-    BSP_LCD_FillRect(0, 190, 86, 100, 100, LCD_COLOR_ARGB8888_RED);
-    BSP_LCD_Relaod(0,BSP_LCD_RELOAD_IMMEDIATE);
-
-    /* --- 6. CRITICAL: Cache Coherence --- */
-    // The CPU wrote the red color to the Cache, but the LCD reads from RAM.
-    // We must push Cache data to RAM.
-    SCB_CleanDCache();
+    BSP_LED_Init(LED1);
+    BSP_LED_Init(LED2);
 
   /* USER CODE END 2 */
 
@@ -117,7 +106,16 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
+	  // Toggle Green LED
+	        BSP_LED_Toggle(LED1);
 
+	        // Turn Red LED on for a brief moment (heartbeat effect)
+	        BSP_LED_On(LED2);
+	        HAL_Delay(100);
+	        BSP_LED_Off(LED2);
+
+	        // Wait for the rest of the second
+	        HAL_Delay(400);
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
