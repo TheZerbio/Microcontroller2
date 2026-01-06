@@ -23,9 +23,11 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "stm32h735g_discovery.h"
-#include "stm32h735g_discovery_lcd.h"
-#include "stm32h735g_discovery_ospi.h"
+#include "parotconf.h"
+#include "display.h"
+#include "touchscreen.h"
+#include "sound.h"
+#include "state.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -46,12 +48,7 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-#define LCD_WIDTH  480
-#define LCD_HEIGHT 272
-
-// Allocate Frame Buffer in internal RAM (AXI SRAM)
-// We align it to 32 bytes for DMA/Cache efficiency
-__attribute__((aligned(32))) uint16_t LCD_FrameBuffer[LCD_WIDTH * LCD_HEIGHT];
+SystemContext_t AppContext;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -96,47 +93,24 @@ int main(void)
   MX_GPIO_Init();
   MX_OCTOSPI1_Init();
   /* USER CODE BEGIN 2 */
-  // 1. Initialize the LCD (You already had this)
-  if(BSP_LCD_Init(0, LCD_ORIENTATION_LANDSCAPE) != BSP_ERROR_NONE)
-    {
-        // Initialization failed - Stuck in loop
-        while(1) {
-            BSP_LED_Toggle(LED2); // Blink Red LED rapidly on error
-            HAL_Delay(50);
-        }
-    }
 
-    // Ensure Display is On (The driver handles pins, but this ensures LTDC is enabled)
-    BSP_LCD_DisplayOn(0);
-
-    // Set Layer 0 as active
-    BSP_LCD_SetActiveLayer(0, 0);
-
-    // 1. Clear the whole screen to Blue
-    // The driver file provided doesn't have BSP_LCD_Clear, so we fill a rect
-    // 480 is width, 272 is height, Color is ARGB (0xFF0000FF = Blue)
-    BSP_LCD_FillRect(0, 0, 0, 480, 272, 0xFF0000FF);
-
-    // 2. Draw a Red Box in the middle
-    // X=190, Y=86, W=100, H=100, Color=Red
-    BSP_LCD_FillRect(0, 190, 86, 100, 100, 0xFFFF0000);
-
-    BSP_LED_Init(LED1);
-    BSP_LED_Init(LED2);
+  State_Init(&AppContext);
 
   /* USER CODE END 2 */
 
-  /* Infinite loop */
-  /* USER CODE BEGIN WHILE */
-  while (1)
-  {
-    /* USER CODE END WHILE */
+    /* Infinite loop */
+    /* USER CODE BEGIN WHILE */
+	while (1)
+	{
+		State_Machine_Run(&AppContext);
+		/* USER CODE END WHILE */
 
-    /* USER CODE BEGIN 3 */
-  }
-  /* USER CODE END 3 */
+		/* USER CODE BEGIN 3 */
+		HAL_Delay(20);
+
+	}
+	/* USER CODE END 3 */
 }
-
 /**
   * @brief System Clock Configuration
   * @retval None

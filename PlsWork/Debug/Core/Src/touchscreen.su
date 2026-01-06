@@ -1,0 +1,3 @@
+../Core/Src/touchscreen.c:9:6:TOUCHSCREEN_INIT	24	static
+../Core/Src/touchscreen.c:23:6:TOUCHSCREEN_CALIBRATION	40	static
+../Core/Src/touchscreen.c:60:10:max	16	static

@@ -30,6 +30,7 @@ Drivers/BSP/Components/mx25lm51245g \
 Drivers/BSP/Components/s70kl1281 \
 Drivers/BSP/Components/wm8994 \
 Drivers/BSP \
+Drivers/Fonts \
 Drivers/STM32H7xx_HAL_Driver/Inc \
 Drivers/STM32H7xx_HAL_Driver/Src \
 

@@ -1,0 +1,21 @@
+/*
+ * parotconf.h
+ *
+ *  Created on: Jan 6, 2026
+ *      Author: Admin
+ */
+
+#ifndef INC_PAROTCONF_H_
+#define INC_PAROTCONF_H_
+#include "stm32h735g_discovery_lcd.h"
+
+#define BACKGROUND_COLOR LCD_COLOR_ARGB8888_WHITE
+#define MAIN_COLOR LCD_COLOR_ARGB8888_BLACK
+#define ACCENT_COLOR LCD_COLOR_ARGB8888_DARKRED
+#define TEXT_COLOR LCD_COLOR_ARGB8888_BLACK
+
+#define CAL_COL1 LCD_COLOR_ARGB8888_ST_GRAY_DARK
+#define CAL_COL2 LCD_COLOR_ARGB8888_ST_PURPLE
+
+
+#endif /* INC_PAROTCONF_H_ */
