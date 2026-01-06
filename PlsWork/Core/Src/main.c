@@ -90,23 +90,25 @@ int main(void)
   MX_GPIO_Init();
   /* USER CODE BEGIN 2 */
 
+  // Initialize the LCD instance 0 in Landscape mode
+    if (BSP_LCD_Init(0, LCD_ORIENTATION_LANDSCAPE) != BSP_ERROR_NONE)
+    {
+        Error_Handler(); // Stop if init fails
+    }
 
-    // 2. Initialize the LCD
-    // Instance 0, Landscape orientation
-    BSP_LCD_Init(0, LCD_ORIENTATION_LANDSCAPE);
 
-    BSP_LCD_Clear(0, LCD_COLOR_BLUE); // Background
+    // Draw a RED SQUARE
+    // Instance: 0
+    // Xpos: 190, Ypos: 86 (roughly centered)
+    // Width: 100, Height: 100
+    // Color: Red (defined in your header)
+    BSP_LCD_FillRect(0, 190, 86, 100, 100, LCD_COLOR_ARGB8888_RED);
+    BSP_LCD_Relaod(0,BSP_LCD_RELOAD_IMMEDIATE);
 
-      // 1. Set the drawing color to RED
-      BSP_LCD_SetTextColor(LCD_COLOR_RED);
-
-      // 2. Draw a filled box
-      // Parameters: Instance (0), X_pos, Y_pos, Width, Height
-      BSP_LCD_FillRect(0, 200, 100, 50, 50);
-
-      // Optional: Draw a White outline around it
-      BSP_LCD_SetTextColor(LCD_COLOR_WHITE);
-      BSP_LCD_DrawRect(0, 200, 100, 50, 50);
+    /* --- 6. CRITICAL: Cache Coherence --- */
+    // The CPU wrote the red color to the Cache, but the LCD reads from RAM.
+    // We must push Cache data to RAM.
+    SCB_CleanDCache();
 
   /* USER CODE END 2 */
 
