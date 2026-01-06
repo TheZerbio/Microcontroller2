@@ -56,7 +56,7 @@ __attribute__((aligned(32))) uint16_t LCD_FrameBuffer[LCD_WIDTH * LCD_HEIGHT];
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
-
+void MPU_Config(void);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -81,7 +81,7 @@ int main(void)
   HAL_Init();
 
   /* USER CODE BEGIN Init */
-
+  MPU_Config();
   /* USER CODE END Init */
 
   /* Configure the system clock */
@@ -94,7 +94,30 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   /* USER CODE BEGIN 2 */
-  	BSP_LCD_Init(0,LCD_ORIENTATION_LANDSCAPE);
+  // 1. Initialize the LCD (You already had this)
+  if(BSP_LCD_Init(0, LCD_ORIENTATION_LANDSCAPE) != BSP_ERROR_NONE)
+    {
+        // Initialization failed - Stuck in loop
+        while(1) {
+            BSP_LED_Toggle(LED2); // Blink Red LED rapidly on error
+            HAL_Delay(50);
+        }
+    }
+
+    // Ensure Display is On (The driver handles pins, but this ensures LTDC is enabled)
+    BSP_LCD_DisplayOn(0);
+
+    // Set Layer 0 as active
+    BSP_LCD_SetActiveLayer(0, 0);
+
+    // 1. Clear the whole screen to Blue
+    // The driver file provided doesn't have BSP_LCD_Clear, so we fill a rect
+    // 480 is width, 272 is height, Color is ARGB (0xFF0000FF = Blue)
+    BSP_LCD_FillRect(0, 0, 0, 480, 272, 0xFF0000FF);
+
+    // 2. Draw a Red Box in the middle
+    // X=190, Y=86, W=100, H=100, Color=Red
+    BSP_LCD_FillRect(0, 190, 86, 100, 100, 0xFFFF0000);
 
     BSP_LED_Init(LED1);
     BSP_LED_Init(LED2);
@@ -181,6 +204,34 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
+
+void MPU_Config(void)
+{
+  MPU_Region_InitTypeDef MPU_InitStruct = {0};
+
+  /* Disables the MPU */
+  HAL_MPU_Disable();
+
+  /** Initializes and configures the Region and the memory to be protected
+  * The Octo-SPI HyperRAM is mapped at 0x70000000 on the H735G-DK
+  */
+  MPU_InitStruct.Enable = MPU_REGION_ENABLE;
+  MPU_InitStruct.Number = MPU_REGION_NUMBER0;
+  MPU_InitStruct.BaseAddress = 0x70000000; // Standard Address for OSPI RAM
+  MPU_InitStruct.Size = MPU_REGION_SIZE_64MB; // Size of the HyperRAM
+  MPU_InitStruct.SubRegionDisable = 0x0;
+  MPU_InitStruct.TypeExtField = MPU_TEX_LEVEL0;
+  MPU_InitStruct.AccessPermission = MPU_REGION_FULL_ACCESS;
+  MPU_InitStruct.DisableExec = MPU_INSTRUCTION_ACCESS_DISABLE;
+  MPU_InitStruct.IsShareable = MPU_ACCESS_SHAREABLE;
+  MPU_InitStruct.IsCacheable = MPU_ACCESS_NOT_CACHEABLE; // Critical for LCD
+  MPU_InitStruct.IsBufferable = MPU_ACCESS_NOT_BUFFERABLE;
+
+  HAL_MPU_ConfigRegion(&MPU_InitStruct);
+
+  /* Enables the MPU */
+  HAL_MPU_Enable(MPU_PRIVILEGED_DEFAULT);
+}
 
 /* USER CODE END 4 */
 
