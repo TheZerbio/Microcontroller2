@@ -6,11 +6,16 @@
  */
 #include "sound.h"
 #include "stm32h735g_discovery_audio.h"
+#include "../../Drivers/BSP/Components/wm8994/wm8994.h"
+
 #define InputInstance 2
 
 // Define the buffer pointer pointing to the external HyperRAM
 uint16_t *AudioBuffer = (uint16_t *)AUDIO_BUFFER_ADDR;
 #define BUFFER_SIZE_WORDS (AUDIO_FREQ * AUDIO_CHANNELS * (RECORD_TIME_MS/1000))
+
+/* External Audio Component Object (defined in stm32h735g_discovery_audio.c) */
+extern void *Audio_CompObj;
 
 int SOUND_INIT(void)
 {
@@ -30,6 +35,7 @@ int SOUND_INIT(void)
     }
 
     // 2. Initialize Headphone/Speaker (Output)
+    // Use HEADPHONE initially, but we will override it to ensure robust startup
     AudioInit.Device        = AUDIO_OUT_DEVICE_HEADPHONE;
     AudioInit.ChannelsNbr   = AUDIO_CHANNELS;
     AudioInit.Volume        = 70;
@@ -37,6 +43,18 @@ int SOUND_INIT(void)
     if(BSP_AUDIO_OUT_Init(0, &AudioInit) != BSP_ERROR_NONE)
     {
         return -1; // Error
+    }
+
+    /*
+     * WORKAROUND: Force "Both" Output Mode.
+     * The BSP driver's "Headphone" initialization sequence can be unreliable for Line Out.
+     * The "Both" mode (Speaker + Headphone) uses a different, manual initialization sequence
+     * that correctly enables the Line Out/Headphone path.
+     * We bypass the BSP limitation by calling the component driver directly.
+     */
+    if (Audio_CompObj != NULL)
+    {
+        WM8994_SetOutputMode((WM8994_Object_t*)Audio_CompObj, WM8994_OUT_BOTH);
     }
 
     return 0; // Success
