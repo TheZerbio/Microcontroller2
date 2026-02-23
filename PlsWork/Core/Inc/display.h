@@ -13,6 +13,7 @@
 #include "stm32h735g_discovery.h"
 #include "stm32h735g_discovery_lcd.h"
 #include "stm32h735g_discovery_ospi.h"
+#include "stm32_lcd.h"
 
 //Functions
 void DISPLAY_INIT(void);

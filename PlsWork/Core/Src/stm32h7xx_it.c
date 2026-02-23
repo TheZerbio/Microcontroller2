@@ -22,6 +22,7 @@
 #include "stm32h7xx_it.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "stm32h735g_discovery_audio.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -199,5 +200,39 @@ void SysTick_Handler(void)
 /******************************************************************************/
 
 /* USER CODE BEGIN 1 */
+
+/**
+  * @brief This function handles DMA2 Stream 4 global interrupt (Used for Audio Record).
+  */
+void DMA2_Stream4_IRQHandler(void)
+{
+  /* We pass AUDIO_IN_DEVICE_ANALOG_MIC because the BSP_AUDIO_IN_IRQHandler
+     function for Instance 0 specifically checks for this flag (or DIGITAL_MIC1)
+     to process the SAI DMA handle.
+  */
+  BSP_AUDIO_IN_IRQHandler(0, AUDIO_IN_DEVICE_ANALOG_MIC);
+}
+
+/**
+  * @brief This function handles DMA2 Stream 6 global interrupt (Used for Audio Playback).
+  */
+void DMA2_Stream6_IRQHandler(void)
+{
+  BSP_AUDIO_OUT_IRQHandler(0);
+}
+
+/**
+  * @brief This function handles SAI1 global interrupt.
+  * Required to manage FIFO errors or peripheral events.
+  */
+void SAI1_IRQHandler(void)
+{
+  /* Handle Audio Output (SAI1 Block B) */
+  HAL_SAI_IRQHandler(&haudio_out_sai);
+
+  /* Handle Audio Input (SAI1 Block A) */
+  /* Instance 0 maps to haudio_in_sai[0] */
+  HAL_SAI_IRQHandler(&haudio_in_sai[0]);
+}
 
 /* USER CODE END 1 */

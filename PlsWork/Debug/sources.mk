@@ -31,6 +31,7 @@ Drivers/BSP/Components/s70kl1281 \
 Drivers/BSP/Components/wm8994 \
 Drivers/BSP \
 Drivers/Fonts \
-Drivers/STM32H7xx_HAL_Driver/Inc \
-Drivers/STM32H7xx_HAL_Driver/Src \
+Drivers/HAL_Drivers_Manual/Inc \
+Drivers/HAL_Drivers_Manual/Src \
+Drivers/Utils \
 

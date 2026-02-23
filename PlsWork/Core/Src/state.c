@@ -34,7 +34,7 @@ void State_Init(SystemContext_t *ctx) {
 }
 
 void State_Machine_Run(SystemContext_t *ctx) {
-
+	uint32_t last_ui_update = 0;
     switch (ctx->currentState) {
         // --- INITIALIZATION ---
         case STATE_INIT:
@@ -75,43 +75,108 @@ void State_Machine_Run(SystemContext_t *ctx) {
 
         // --- RECORDING ---
         case STATE_RECORDING:
-            if(ctx->needs_redraw) {
-                // UI Update
-                DISPLAY_Clear(ACCENT_COLOR); // Dark Red background
-                DISPLAY_DrawHeadline(10,10,"STATE_RECORDING");
+			if(ctx->needs_redraw) {
+				// 1. Setup Background and Text using parotconf colors
+				UTIL_LCD_Clear(BACKGROUND_COLOR);
+				UTIL_LCD_SetBackColor(BACKGROUND_COLOR);
+				UTIL_LCD_SetTextColor(TEXT_COLOR);
+				UTIL_LCD_SetFont(&Font24);
+				UTIL_LCD_DisplayStringAt(10, 10, (uint8_t*)"RECORDING...", LEFT_MODE);
 
-                // Hardware Trigger
-                //Sound_StartRecording();
-                ctx->timer_start = HAL_GetTick(); // Mark start time
-                ctx->needs_redraw = 0;
-            }
+				// 2. Draw the Bar Container (Outline)
+				// Using TEXT_COLOR or MAIN_COLOR for high contrast frame
+				UTIL_LCD_DrawRect(50, 100, 380, 50, MAIN_COLOR);
 
-            // Non-blocking Timer Check
-            if((HAL_GetTick() - ctx->timer_start) >= RECORD_TIME_MS) {
-                Sound_StopRecording();
-                ChangeState(ctx, STATE_PLAYBACK);
-            }
-            break;
+				// Start Hardware
+				Sound_StartRecording();
+				ctx->timer_start = HAL_GetTick();
+				ctx->needs_redraw = 0;
+			}
+
+			uint32_t elapsed = HAL_GetTick() - ctx->timer_start;
+
+			// --- VISUALIZATION (Volume Meter) ---
+			// Update UI every 30ms to prevent flickering
+			if ((HAL_GetTick() - last_ui_update) > 30)
+			{
+				uint16_t volume = Sound_GetInputLevel(elapsed);
+
+				// Scale volume (0-32000) to Bar Width (0-378px)
+				uint32_t bar_width = volume / 64;
+				if (bar_width > 378) bar_width = 378;
+
+				// Draw Active Part: Use ACCENT_COLOR (DarkRed) for Recording
+				if (bar_width > 0) {
+					UTIL_LCD_FillRect(51, 101, bar_width, 48, ACCENT_COLOR);
+				}
+
+				// Draw Inactive Part: Use BACKGROUND_COLOR to "erase" old bar
+				if (bar_width < 378) {
+					UTIL_LCD_FillRect(51 + bar_width, 101, 378 - bar_width, 48, BACKGROUND_COLOR);
+				}
+
+				last_ui_update = HAL_GetTick();
+			}
+
+			// Stop Check
+			if(elapsed >= RECORD_TIME_MS) {
+				Sound_StopRecording();
+				ChangeState(ctx, STATE_PLAYBACK);
+			}
+			break;
 
         // --- PLAYBACK ---
         case STATE_PLAYBACK:
-            if(ctx->needs_redraw) {
-                // UI Update (Purple/Gray theme from your config)
-                DISPLAY_Clear(LCD_COLOR_ARGB8888_YELLOW);
-                DISPLAY_DrawHeadline(10,10,"STATE_PLAYBACK");
+        	if(ctx->needs_redraw) {
+				// 1. Setup Background and Text
+				UTIL_LCD_Clear(BACKGROUND_COLOR);
+				UTIL_LCD_SetBackColor(BACKGROUND_COLOR);
+				UTIL_LCD_SetTextColor(TEXT_COLOR);
+				UTIL_LCD_SetFont(&Font24);
+				UTIL_LCD_DisplayStringAt(10, 10, (uint8_t*)"PLAYBACK...", LEFT_MODE);
 
-                // Hardware Trigger
-                Sound_StartPlayback();
-                ctx->timer_start = HAL_GetTick();
-                ctx->needs_redraw = 0;
-            }
+				// 2. Draw Container (Outline)
+				UTIL_LCD_DrawRect(50, 100, 380, 50, MAIN_COLOR);
 
-            // Non-blocking Timer Check
-            if((HAL_GetTick() - ctx->timer_start) >= RECORD_TIME_MS) {
-                Sound_StopPlayback();
-                ChangeState(ctx, STATE_IDLE);
-            }
-            break;
+				// Start Hardware
+				Sound_StartPlayback();
+				ctx->timer_start = HAL_GetTick();
+				ctx->needs_redraw = 0;
+			}
+
+			uint32_t play_elapsed = HAL_GetTick() - ctx->timer_start;
+
+			// --- VISUALIZATION (Progress Bar) ---
+			if ((HAL_GetTick() - last_ui_update) > 30)
+			{
+				// Calculate Progress Percentage based on Time
+				// Max width is 378px (380px container - 2px border)
+				uint32_t total_width = 378;
+
+				// Avoid divide by zero
+				if(RECORD_TIME_MS > 0) {
+					uint32_t progress_width = (play_elapsed * total_width) / RECORD_TIME_MS;
+					if (progress_width > total_width) progress_width = total_width;
+
+					// Draw Active Part: Use CAL_COL2 (Purple) for Playback
+					if (progress_width > 0) {
+						UTIL_LCD_FillRect(51, 101, progress_width, 48, CAL_COL2);
+					}
+
+					// Draw Inactive Part: BACKGROUND_COLOR
+					if (progress_width < total_width) {
+						UTIL_LCD_FillRect(51 + progress_width, 101, total_width - progress_width, 48, BACKGROUND_COLOR);
+					}
+				}
+				last_ui_update = HAL_GetTick();
+			}
+
+			// Stop Check
+			if(play_elapsed >= RECORD_TIME_MS) {
+				Sound_StopPlayback();
+				ChangeState(ctx, STATE_IDLE);
+			}
+			break;
 
         // --- CALIBRATION ---
         case STATE_CALIBRATION:

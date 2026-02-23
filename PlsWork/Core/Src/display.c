@@ -1,15 +1,28 @@
 #include "display.h"
 
-void DISPLAY_INIT(){
-	BSP_LCD_Init(0, LCD_ORIENTATION_LANDSCAPE);
-	BSP_LCD_DisplayOn(0);
-	BSP_LCD_SetActiveLayer(0, 0);
-	BSP_LCD_FillRect(0, 0, 0, 480, 272, LCD_COLOR_ARGB8888_DARKCYAN );
+void DISPLAY_INIT(void){
+    BSP_LCD_Init(0, LCD_ORIENTATION_LANDSCAPE);
+    BSP_LCD_DisplayOn(0);
+
+    // Link the generic stm32_lcd library to the hardware driver
+    // Without this line, all UTIL_LCD_ functions will fail!
+    UTIL_LCD_SetFuncDriver(&LCD_Driver);
+
+    UTIL_LCD_SetDevice(0);          // LCD Instance 0
+    UTIL_LCD_SetLayer(0);           // Layer 0
+    UTIL_LCD_SetFont(&Font24);      // Default Font
+    UTIL_LCD_SetTextColor(UTIL_LCD_COLOR_WHITE);
+    UTIL_LCD_SetBackColor(UTIL_LCD_COLOR_ST_GRAY_DARK);
+
+    UTIL_LCD_Clear(UTIL_LCD_COLOR_ST_GRAY_DARK);
 }
 
 void DISPLAY_Clear(uint32_t color){
-	BSP_LCD_FillRect(0, 0, 0, 480, 272, color );
+    UTIL_LCD_Clear(color);
 }
+
+
+//These are legacy functions i wrote before discovering the stm32_lcd.h file which basically implements these and more
 
 /**
   * @brief  Draws a single character on the screen.
@@ -106,6 +119,9 @@ void DISPLAY_DrawString(uint16_t Xpos, uint16_t Ypos, const sFONT *pFont, uint32
     Text++;
   }
 }
+
+//Wrapper functions for the display
+
 void DISPLAY_DrawHeadline(uint16_t Xpos, uint16_t Ypos, char *Text){
 	DISPLAY_DrawString(Xpos, Ypos, &Font12, TEXT_COLOR, Text);
 }

@@ -1,6 +1,6 @@
-../Core/Src/display.c:3:6:DISPLAY_INIT	16	static
-../Core/Src/display.c:10:6:DISPLAY_Clear	24	static
-../Core/Src/display.c:17:6:DISPLAY_DrawChar	56	static
-../Core/Src/display.c:83:6:DISPLAY_DrawString	40	static
-../Core/Src/display.c:109:6:DISPLAY_DrawHeadline	24	static
-../Core/Src/display.c:112:6:DISPLAY_DrawText	24	static
+../Core/Src/display.c:3:6:DISPLAY_INIT	8	static
+../Core/Src/display.c:20:6:DISPLAY_Clear	16	static
+../Core/Src/display.c:30:6:DISPLAY_DrawChar	56	static
+../Core/Src/display.c:96:6:DISPLAY_DrawString	40	static
+../Core/Src/display.c:125:6:DISPLAY_DrawHeadline	24	static
+../Core/Src/display.c:128:6:DISPLAY_DrawText	24	static

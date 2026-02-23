@@ -1,5 +1,6 @@
-../Core/Src/sound.c:14:5:SOUND_INIT	32	static
-../Core/Src/sound.c:42:6:Sound_StartRecording	8	static
-../Core/Src/sound.c:48:6:Sound_StopRecording	8	static
-../Core/Src/sound.c:53:6:Sound_StartPlayback	8	static
-../Core/Src/sound.c:59:6:Sound_StopPlayback	8	static
+../Core/Src/sound.c:15:5:SOUND_INIT	32	static
+../Core/Src/sound.c:44:6:Sound_StartRecording	8	static
+../Core/Src/sound.c:50:6:Sound_StopRecording	8	static
+../Core/Src/sound.c:55:6:Sound_StartPlayback	8	static
+../Core/Src/sound.c:61:6:Sound_StopPlayback	8	static
+../Core/Src/sound.c:67:10:Sound_GetInputLevel	40	static
