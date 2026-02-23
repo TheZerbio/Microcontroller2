@@ -30,7 +30,7 @@ int SOUND_INIT(void)
     }
 
     // 2. Initialize Headphone/Speaker (Output)
-    AudioInit.Device        = AUDIO_OUT_DEVICE_HEADPHONE;
+    AudioInit.Device        = AUDIO_OUT_DEVICE_SPK_HP;
     AudioInit.ChannelsNbr   = AUDIO_CHANNELS;
     AudioInit.Volume        = 70;
 
