@@ -26,5 +26,6 @@ void Sound_StopRecording(void);
 void Sound_StartPlayback(void);
 void Sound_StopPlayback(void);
 uint16_t Sound_GetInputLevel(uint32_t elapsed_time_ms);
+void Sound_GenerateTestTone(void);
 
 #endif /* INC_SOUND_H_ */

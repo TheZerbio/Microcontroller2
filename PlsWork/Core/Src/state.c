@@ -46,6 +46,10 @@ void State_Machine_Run(SystemContext_t *ctx) {
 					return;
 				}
 				BSP_PB_Init(BUTTON_USER, BUTTON_MODE_GPIO);
+
+                // Pre-fill buffer with test tone for debugging
+                Sound_GenerateTestTone();
+
                 DISPLAY_Clear(BACKGROUND_COLOR);
                 DISPLAY_DrawString(100, 120, &Font24, TEXT_COLOR, "SYSTEM INIT");
 
@@ -65,9 +69,10 @@ void State_Machine_Run(SystemContext_t *ctx) {
                 ctx->needs_redraw = 0;
             }
 
-            // INPUT: User Button -> Record
+            // INPUT: User Button -> Playback (Skip Recording for Debug)
             if(BSP_PB_GetState(BUTTON_USER) == 1) {
-                ChangeState(ctx, STATE_RECORDING);
+                // ChangeState(ctx, STATE_RECORDING); // Original
+                ChangeState(ctx, STATE_PLAYBACK); // Debug: Go straight to playback
                 HAL_Delay(300); // Simple Debounce
             }
 

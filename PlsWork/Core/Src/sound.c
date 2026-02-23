@@ -107,3 +107,33 @@ uint16_t Sound_GetInputLevel(uint32_t elapsed_time_ms)
     if (lookback == 0) return 0;
     return (uint16_t)(sum / lookback);
 }
+
+// Generate a 1kHz Square Wave Test Tone
+void Sound_GenerateTestTone(void)
+{
+    // 1kHz tone at 16kHz sample rate = 16 samples per cycle
+    // Square wave: 8 samples high, 8 samples low
+    // Amplitude: 10000 (roughly 1/3 max volume)
+
+    int16_t amplitude = 10000;
+    uint32_t period_samples = 16;
+    uint32_t half_period = 8;
+
+    for (uint32_t i = 0; i < BUFFER_SIZE_WORDS; i += 2)
+    {
+        // Calculate sample index within the period
+        uint32_t sample_idx = (i / 2) % period_samples;
+
+        int16_t value;
+        if (sample_idx < half_period) {
+            value = amplitude;
+        } else {
+            value = -amplitude;
+        }
+
+        // Write to Stereo Buffer (Left and Right)
+        // AudioBuffer is uint16_t*, but stores int16_t PCM data
+        AudioBuffer[i]     = (uint16_t)value; // Left
+        AudioBuffer[i + 1] = (uint16_t)value; // Right
+    }
+}
