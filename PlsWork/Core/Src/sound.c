@@ -82,6 +82,37 @@ void Sound_StopPlayback(void)
     BSP_AUDIO_OUT_Stop(0);
 }
 
+// Callback implementation
+// These are called by the BSP/HAL Interrupt Handler to indicate DMA progress.
+// Since we are writing to External RAM via DMA, the CPU cache might still hold
+// old (invalid) data for that region. We must invalidate the cache to ensure
+// the CPU reads the fresh data written by the DMA.
+
+void BSP_AUDIO_IN_HalfTransfer_CallBack(uint32_t Instance)
+{
+    if (Instance == InputInstance)
+    {
+        // Invalidate the first half of the buffer
+        // Size in Bytes = (Total Words * 2) / 2 = Total Words
+        SCB_InvalidateDCache_by_Addr((uint32_t*)AudioBuffer, BUFFER_SIZE_WORDS);
+    }
+}
+
+void BSP_AUDIO_IN_TransferComplete_CallBack(uint32_t Instance)
+{
+    if (Instance == InputInstance)
+    {
+        // Invalidate the second half of the buffer
+        // Pointer arithmetic: AudioBuffer + (Half Words)
+        SCB_InvalidateDCache_by_Addr((uint32_t*)(AudioBuffer + (BUFFER_SIZE_WORDS / 2)), BUFFER_SIZE_WORDS);
+    }
+}
+
+void BSP_AUDIO_IN_Error_CallBack(uint32_t Instance)
+{
+    // Handle error if needed
+}
+
 // Helper to get current volume (Amplitude 0-32767)
 uint16_t Sound_GetInputLevel(uint32_t elapsed_time_ms)
 {
@@ -92,6 +123,13 @@ uint16_t Sound_GetInputLevel(uint32_t elapsed_time_ms)
     if (current_index >= BUFFER_SIZE_WORDS) {
         current_index = BUFFER_SIZE_WORDS - 1;
     }
+
+    // Since we are polling this value while DMA is running, we should theoretically
+    // invalidate the specific cache line we are about to read.
+    // However, the HalfTransfer/TransferComplete callbacks handle bulk invalidation.
+    // For a real-time VU meter, we might read slightly stale data (ms old) which is acceptable.
+    // If we wanted perfect accuracy, we'd invalidate here too:
+    // SCB_InvalidateDCache_by_Addr((uint32_t*)&AudioBuffer[current_index], 32);
 
     // 2. Look at the last 100 samples for avg audio.
     uint32_t lookback = 100;
