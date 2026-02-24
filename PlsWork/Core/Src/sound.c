@@ -9,6 +9,9 @@
 #include "stm32h735g_discovery_ospi.h"
 #define InputInstance 2
 
+// External access to OSPI State (from stm32h735g_discovery_ospi.c) to check initialization status
+extern OSPI_RAM_Ctx_t Ospi_Ram_Ctx[];
+
 // Define the buffer size
 #define BUFFER_SIZE_WORDS (AUDIO_FREQ * AUDIO_CHANNELS * (RECORD_TIME_MS/1000))
 
@@ -21,17 +24,21 @@ int SOUND_INIT(void)
     BSP_AUDIO_Init_t AudioInit;
 
     // 0. Ensure OCTOSPI RAM is Initialized and Memory Mapped
-    ospi_init.LatencyType = BSP_OSPI_RAM_FIXED_LATENCY;
-    ospi_init.BurstType   = BSP_OSPI_RAM_LINEAR_BURST;
-    ospi_init.BurstLength = BSP_OSPI_RAM_BURST_32_BYTES;
+    // Check if already initialized (e.g., by LCD driver) to avoid re-initialization errors
+    if (Ospi_Ram_Ctx[0].IsInitialized != OSPI_ACCESS_MMP)
+    {
+        ospi_init.LatencyType = BSP_OSPI_RAM_FIXED_LATENCY;
+        ospi_init.BurstType   = BSP_OSPI_RAM_LINEAR_BURST;
+        ospi_init.BurstLength = BSP_OSPI_RAM_BURST_32_BYTES;
 
-    if (BSP_OSPI_RAM_Init(0, &ospi_init) != BSP_ERROR_NONE)
-    {
-        return -1;
-    }
-    if (BSP_OSPI_RAM_EnableMemoryMappedMode(0) != BSP_ERROR_NONE)
-    {
-        return -1;
+        if (BSP_OSPI_RAM_Init(0, &ospi_init) != BSP_ERROR_NONE)
+        {
+            return -1;
+        }
+        if (BSP_OSPI_RAM_EnableMemoryMappedMode(0) != BSP_ERROR_NONE)
+        {
+            return -1;
+        }
     }
 
     // 1. Initialize Microphone (Input)
