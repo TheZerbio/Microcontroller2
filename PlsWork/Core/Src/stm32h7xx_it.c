@@ -236,7 +236,15 @@ void SAI1_IRQHandler(void)
 }
 
 /**
-  * @brief This function handles DMA2 Stream 7 global interrupt (Used for Digital Mic).
+  * @brief This function handles DMA2 Stream 0 global interrupt (Used for Digital Mic 2).
+  */
+void DMA2_Stream0_IRQHandler(void)
+{
+  BSP_AUDIO_IN_IRQHandler(2, AUDIO_IN_DEVICE_DIGITAL_MIC2);
+}
+
+/**
+  * @brief This function handles DMA2 Stream 7 global interrupt (Used for Digital Mic 1).
   */
 void DMA2_Stream7_IRQHandler(void)
 {

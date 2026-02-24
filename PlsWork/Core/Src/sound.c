@@ -42,8 +42,11 @@ int SOUND_INIT(void)
     }
 
     // 1. Initialize Microphone (Input)
-    AudioInit.Device        = AUDIO_IN_DEVICE_DIGITAL_MIC1;
-    AudioInit.ChannelsNbr   = 1;
+    // Note: The BSP Driver for DFSDM (Instance 2) logic requires BOTH Microphones (MIC1 & MIC2)
+    // to complete their DMA transfers before triggering the TransferComplete callback.
+    // Therefore, we must enable both devices and set channels to 2.
+    AudioInit.Device        = AUDIO_IN_DEVICE_DIGITAL_MIC1 | AUDIO_IN_DEVICE_DIGITAL_MIC2;
+    AudioInit.ChannelsNbr   = 2;
     AudioInit.SampleRate    = AUDIO_FREQ;
     AudioInit.BitsPerSample = AUDIO_RESOLUTION_16B;
     AudioInit.Volume        = 100;
