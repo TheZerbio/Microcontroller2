@@ -204,7 +204,7 @@ void MPU_Config(void)
   MPU_InitStruct.BaseAddress = 0x70000000; // Standard Address for OSPI RAM
   MPU_InitStruct.Size = MPU_REGION_SIZE_64MB; // Size of the HyperRAM
   MPU_InitStruct.SubRegionDisable = 0x0;
-  MPU_InitStruct.TypeExtField = MPU_TEX_LEVEL0;
+  MPU_InitStruct.TypeExtField = MPU_TEX_LEVEL1; // Change to Normal, Non-Cacheable memory (TEX=1) to prevent HardFaults on unaligned/burst access
   MPU_InitStruct.AccessPermission = MPU_REGION_FULL_ACCESS;
   MPU_InitStruct.DisableExec = MPU_INSTRUCTION_ACCESS_DISABLE;
   MPU_InitStruct.IsShareable = MPU_ACCESS_SHAREABLE;
