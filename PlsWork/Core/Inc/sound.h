@@ -17,7 +17,9 @@
 #define RECORD_TIME_MS       5000
 
 // Memory Location (OSPI RAM Offset from Image Data to prevent access conflicts)
-#define AUDIO_BUFFER_ADDR    0x70100000
+// Defined in Linker Script
+
+extern uint16_t AudioBuffer[];
 
 // Functions
 int SOUND_INIT(void);
