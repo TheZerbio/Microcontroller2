@@ -6,15 +6,33 @@
  */
 #include "sound.h"
 #include "stm32h735g_discovery_audio.h"
+#include "stm32h735g_discovery_ospi.h"
 #define InputInstance 2
 
-// Define the buffer pointer pointing to the external HyperRAM
-uint16_t *AudioBuffer = (uint16_t *)AUDIO_BUFFER_ADDR;
+// Define the buffer size
 #define BUFFER_SIZE_WORDS (AUDIO_FREQ * AUDIO_CHANNELS * (RECORD_TIME_MS/1000))
+
+// Define the buffer array in external HyperRAM (via Linker Script)
+uint16_t AudioBuffer[BUFFER_SIZE_WORDS] __attribute__((section(".audio_section"), aligned(32)));
 
 int SOUND_INIT(void)
 {
+    BSP_OSPI_RAM_Init_t ospi_init;
     BSP_AUDIO_Init_t AudioInit;
+
+    // 0. Ensure OCTOSPI RAM is Initialized and Memory Mapped
+    ospi_init.LatencyType = BSP_OSPI_RAM_FIXED_LATENCY;
+    ospi_init.BurstType   = BSP_OSPI_RAM_LINEAR_BURST;
+    ospi_init.BurstLength = BSP_OSPI_RAM_BURST_32_BYTES;
+
+    if (BSP_OSPI_RAM_Init(0, &ospi_init) != BSP_ERROR_NONE)
+    {
+        return -1;
+    }
+    if (BSP_OSPI_RAM_EnableMemoryMappedMode(0) != BSP_ERROR_NONE)
+    {
+        return -1;
+    }
 
     // 1. Initialize Microphone (Input)
     AudioInit.Device        = AUDIO_IN_DEVICE_DIGITAL_MIC1;

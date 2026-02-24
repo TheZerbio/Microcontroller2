@@ -49,6 +49,7 @@ MEMORY
   RAM_D1  (xrw)    : ORIGIN = 0x24000000,   LENGTH = 320K
   RAM_D2  (xrw)    : ORIGIN = 0x30000000,   LENGTH = 32K
   RAM_D3  (xrw)    : ORIGIN = 0x38000000,   LENGTH = 16K
+  OCTOSPI_RAM (xrw): ORIGIN = 0x70100000,   LENGTH = 1M
 }
 
 /* Define output sections */
@@ -165,6 +166,14 @@ SECTIONS
     . = . + _Min_Stack_Size;
     . = ALIGN(8);
   } >RAM_D1
+
+  /* Custom Audio Buffer Section in OCTOSPI RAM */
+  .audio_section (NOLOAD) :
+  {
+    . = ALIGN(32);
+    *(.audio_section)
+    . = ALIGN(32);
+  } >OCTOSPI_RAM
 
   /* Remove information from the standard libraries */
   /DISCARD/ :
