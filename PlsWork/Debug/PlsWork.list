@@ -2421,10 +2421,10 @@ int SOUND_INIT(void)
     BSP_AUDIO_Init_t AudioInit;
 
     // 1. Initialize Microphone (Input)
-    AudioInit.Device        = AUDIO_IN_DEVICE_DIGITAL_MIC;
+    AudioInit.Device        = AUDIO_IN_DEVICE_DIGITAL_MIC1;
  8001186:	2330      	movs	r3, #48	@ 0x30
  8001188:	607b      	str	r3, [r7, #4]
-    AudioInit.ChannelsNbr   = AUDIO_CHANNELS;
+    AudioInit.ChannelsNbr   = 1;
  800118a:	2302      	movs	r3, #2
  800118c:	613b      	str	r3, [r7, #16]
     AudioInit.SampleRate    = AUDIO_FREQ;
@@ -2456,11 +2456,11 @@ int SOUND_INIT(void)
     AudioInit.Device        = AUDIO_OUT_DEVICE_HEADPHONE;
  80011b2:	2302      	movs	r3, #2
  80011b4:	607b      	str	r3, [r7, #4]
-    AudioInit.Volume        = 70;
+    AudioInit.ChannelsNbr   = AUDIO_CHANNELS;
  80011b6:	2346      	movs	r3, #70	@ 0x46
  80011b8:	617b      	str	r3, [r7, #20]
+    AudioInit.Volume        = 70;
 
-    if(BSP_AUDIO_OUT_Init(0, &AudioInit) != BSP_ERROR_NONE)
  80011ba:	1d3b      	adds	r3, r7, #4
  80011bc:	4619      	mov	r1, r3
  80011be:	2000      	movs	r0, #0
@@ -2468,15 +2468,15 @@ int SOUND_INIT(void)
  80011c4:	4603      	mov	r3, r0
  80011c6:	2b00      	cmp	r3, #0
  80011c8:	d002      	beq.n	80011d0 <SOUND_INIT+0x50>
+    if(BSP_AUDIO_OUT_Init(0, &AudioInit) != BSP_ERROR_NONE)
     {
-        return -1; // Error
  80011ca:	f04f 33ff 	mov.w	r3, #4294967295
  80011ce:	e000      	b.n	80011d2 <SOUND_INIT+0x52>
+        return -1; // Error
     }
 
-    return 0; // Success
  80011d0:	2300      	movs	r3, #0
-}
+    return 0; // Success
  80011d2:	4618      	mov	r0, r3
  80011d4:	3718      	adds	r7, #24
  80011d6:	46bd      	mov	sp, r7
@@ -2484,20 +2484,20 @@ int SOUND_INIT(void)
 	...
 
 080011dc <Sound_StartRecording>:
+}
 
 void Sound_StartRecording(void)
-{
  80011dc:	b580      	push	{r7, lr}
  80011de:	af00      	add	r7, sp, #0
+{
     // Multiply by 2 because the function expects size in Bytes, not Words
-    BSP_AUDIO_IN_Record(InputInstance, (uint8_t*)AudioBuffer, BUFFER_SIZE_WORDS * 2);
  80011e0:	4b04      	ldr	r3, [pc, #16]	@ (80011f4 <Sound_StartRecording+0x18>)
  80011e2:	681b      	ldr	r3, [r3, #0]
  80011e4:	4a04      	ldr	r2, [pc, #16]	@ (80011f8 <Sound_StartRecording+0x1c>)
  80011e6:	4619      	mov	r1, r3
  80011e8:	2000      	movs	r0, #0
  80011ea:	f005 fa45 	bl	8006678 <BSP_AUDIO_IN_Record>
-}
+    BSP_AUDIO_IN_Record(InputInstance, (uint8_t*)AudioBuffer, BUFFER_SIZE_WORDS * 2);
  80011ee:	bf00      	nop
  80011f0:	bd80      	pop	{r7, pc}
  80011f2:	bf00      	nop
@@ -2505,34 +2505,34 @@ void Sound_StartRecording(void)
  80011f8:	0004e200 	.word	0x0004e200
 
 080011fc <Sound_StopRecording>:
+}
 
 void Sound_StopRecording(void)
-{
  80011fc:	b580      	push	{r7, lr}
  80011fe:	af00      	add	r7, sp, #0
-    BSP_AUDIO_IN_Stop(InputInstance);
+{
  8001200:	2000      	movs	r0, #0
  8001202:	f005 fb35 	bl	8006870 <BSP_AUDIO_IN_Stop>
-}
+    BSP_AUDIO_IN_Stop(InputInstance);
  8001206:	bf00      	nop
  8001208:	bd80      	pop	{r7, pc}
 	...
 
 0800120c <Sound_StartPlayback>:
+}
 
 void Sound_StartPlayback(void)
-{
  800120c:	b580      	push	{r7, lr}
  800120e:	af00      	add	r7, sp, #0
+{
     // Multiply by 2 for Bytes
-    BSP_AUDIO_OUT_Play(0, (uint8_t*)AudioBuffer, BUFFER_SIZE_WORDS * 2);
  8001210:	4b04      	ldr	r3, [pc, #16]	@ (8001224 <Sound_StartPlayback+0x18>)
  8001212:	681b      	ldr	r3, [r3, #0]
  8001214:	4a04      	ldr	r2, [pc, #16]	@ (8001228 <Sound_StartPlayback+0x1c>)
  8001216:	4619      	mov	r1, r3
  8001218:	2000      	movs	r0, #0
  800121a:	f003 ff61 	bl	80050e0 <BSP_AUDIO_OUT_Play>
-}
+    BSP_AUDIO_OUT_Play(0, (uint8_t*)AudioBuffer, BUFFER_SIZE_WORDS * 2);
  800121e:	bf00      	nop
  8001220:	bd80      	pop	{r7, pc}
  8001222:	bf00      	nop
@@ -2540,30 +2540,30 @@ void Sound_StartPlayback(void)
  8001228:	0004e200 	.word	0x0004e200
 
 0800122c <Sound_StopPlayback>:
+}
 
 void Sound_StopPlayback(void)
-{
  800122c:	b580      	push	{r7, lr}
  800122e:	af00      	add	r7, sp, #0
-    BSP_AUDIO_OUT_Stop(0);
+{
  8001230:	2000      	movs	r0, #0
  8001232:	f003 ffc3 	bl	80051bc <BSP_AUDIO_OUT_Stop>
-}
+    BSP_AUDIO_OUT_Stop(0);
  8001236:	bf00      	nop
  8001238:	bd80      	pop	{r7, pc}
 	...
 
 0800123c <Sound_GetInputLevel>:
+}
 
 // Helper to get current volume (Amplitude 0-32767)
 uint16_t Sound_GetInputLevel(uint32_t elapsed_time_ms)
-{
  800123c:	b480      	push	{r7}
  800123e:	b089      	sub	sp, #36	@ 0x24
  8001240:	af00      	add	r7, sp, #0
  8001242:	6078      	str	r0, [r7, #4]
+{
     // 1. Calculate roughly where the DMA is currently writing
-    uint32_t current_index = (AUDIO_FREQ * AUDIO_CHANNELS * elapsed_time_ms)/ 1000;
  8001244:	687b      	ldr	r3, [r7, #4]
  8001246:	f44f 42fa 	mov.w	r2, #32000	@ 0x7d00
  800124a:	fb02 f303 	mul.w	r3, r2, r3
@@ -2571,39 +2571,39 @@ uint16_t Sound_GetInputLevel(uint32_t elapsed_time_ms)
  8001250:	fba2 2303 	umull	r2, r3, r2, r3
  8001254:	099b      	lsrs	r3, r3, #6
  8001256:	61fb      	str	r3, [r7, #28]
+    uint32_t current_index = (AUDIO_FREQ * AUDIO_CHANNELS * elapsed_time_ms)/ 1000;
 
     //Safety
-    if (current_index >= BUFFER_SIZE_WORDS) {
  8001258:	69fb      	ldr	r3, [r7, #28]
  800125a:	4a1f      	ldr	r2, [pc, #124]	@ (80012d8 <Sound_GetInputLevel+0x9c>)
  800125c:	4293      	cmp	r3, r2
  800125e:	d901      	bls.n	8001264 <Sound_GetInputLevel+0x28>
-        current_index = BUFFER_SIZE_WORDS - 1;
+    if (current_index >= BUFFER_SIZE_WORDS) {
  8001260:	4b1d      	ldr	r3, [pc, #116]	@ (80012d8 <Sound_GetInputLevel+0x9c>)
  8001262:	61fb      	str	r3, [r7, #28]
+        current_index = BUFFER_SIZE_WORDS - 1;
     }
 
     // 2. Look at the last 100 samples for avg audio.
-    uint32_t lookback = 100;
  8001264:	2364      	movs	r3, #100	@ 0x64
  8001266:	61bb      	str	r3, [r7, #24]
-    if (current_index < lookback) lookback = current_index;
+    uint32_t lookback = 100;
  8001268:	69fa      	ldr	r2, [r7, #28]
  800126a:	69bb      	ldr	r3, [r7, #24]
  800126c:	429a      	cmp	r2, r3
  800126e:	d201      	bcs.n	8001274 <Sound_GetInputLevel+0x38>
  8001270:	69fb      	ldr	r3, [r7, #28]
  8001272:	61bb      	str	r3, [r7, #24]
+    if (current_index < lookback) lookback = current_index;
 
-    uint32_t sum = 0;
  8001274:	2300      	movs	r3, #0
  8001276:	617b      	str	r3, [r7, #20]
-    for (uint32_t i = 0; i < lookback; i++)
+    uint32_t sum = 0;
  8001278:	2300      	movs	r3, #0
  800127a:	613b      	str	r3, [r7, #16]
  800127c:	e015      	b.n	80012aa <Sound_GetInputLevel+0x6e>
+    for (uint32_t i = 0; i < lookback; i++)
     {
-        int16_t sample = (int16_t)AudioBuffer[current_index - i];
  800127e:	4b17      	ldr	r3, [pc, #92]	@ (80012dc <Sound_GetInputLevel+0xa0>)
  8001280:	681a      	ldr	r2, [r3, #0]
  8001282:	69f9      	ldr	r1, [r7, #28]
@@ -2613,7 +2613,7 @@ uint16_t Sound_GetInputLevel(uint32_t elapsed_time_ms)
  800128a:	4413      	add	r3, r2
  800128c:	881b      	ldrh	r3, [r3, #0]
  800128e:	81fb      	strh	r3, [r7, #14]
-        sum += abs(sample);
+        int16_t sample = (int16_t)AudioBuffer[current_index - i];
  8001290:	f9b7 300e 	ldrsh.w	r3, [r7, #14]
  8001294:	2b00      	cmp	r3, #0
  8001296:	bfb8      	it	lt
@@ -2623,7 +2623,7 @@ uint16_t Sound_GetInputLevel(uint32_t elapsed_time_ms)
  800129e:	697b      	ldr	r3, [r7, #20]
  80012a0:	4413      	add	r3, r2
  80012a2:	617b      	str	r3, [r7, #20]
-    for (uint32_t i = 0; i < lookback; i++)
+    uint32_t sum = 0;
  80012a4:	693b      	ldr	r3, [r7, #16]
  80012a6:	3301      	adds	r3, #1
  80012a8:	613b      	str	r3, [r7, #16]
@@ -2631,20 +2631,20 @@ uint16_t Sound_GetInputLevel(uint32_t elapsed_time_ms)
  80012ac:	69bb      	ldr	r3, [r7, #24]
  80012ae:	429a      	cmp	r2, r3
  80012b0:	d3e5      	bcc.n	800127e <Sound_GetInputLevel+0x42>
+        sum += abs(sample);
     }
 
-    if (lookback == 0) return 0;
  80012b2:	69bb      	ldr	r3, [r7, #24]
  80012b4:	2b00      	cmp	r3, #0
  80012b6:	d101      	bne.n	80012bc <Sound_GetInputLevel+0x80>
  80012b8:	2300      	movs	r3, #0
  80012ba:	e004      	b.n	80012c6 <Sound_GetInputLevel+0x8a>
-    return (uint16_t)(sum / lookback);
+    if (lookback == 0) return 0;
  80012bc:	697a      	ldr	r2, [r7, #20]
  80012be:	69bb      	ldr	r3, [r7, #24]
  80012c0:	fbb2 f3f3 	udiv	r3, r2, r3
  80012c4:	b29b      	uxth	r3, r3
-}
+    return (uint16_t)(sum / lookback);
  80012c6:	4618      	mov	r0, r3
  80012c8:	3724      	adds	r7, #36	@ 0x24
  80012ca:	46bd      	mov	sp, r7
