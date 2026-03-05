@@ -6,7 +6,7 @@
  */
 #include "sound.h"
 #include "stm32h735g_discovery_audio.h"
-#define InputInstance 2
+#define InputInstance 0
 
 // Define the buffer pointer pointing to the external HyperRAM
 uint16_t *AudioBuffer = (uint16_t *)AUDIO_BUFFER_ADDR;
@@ -17,8 +17,8 @@ int SOUND_INIT(void)
     BSP_AUDIO_Init_t AudioInit;
 
     // 1. Initialize Microphone (Input)
-    AudioInit.Device        = AUDIO_IN_DEVICE_DIGITAL_MIC1;
-    AudioInit.ChannelsNbr   = 1;
+    AudioInit.Device        = AUDIO_IN_DEVICE_DIGITAL_MIC;
+    AudioInit.ChannelsNbr   = AUDIO_CHANNELS;
     AudioInit.SampleRate    = AUDIO_FREQ;
     AudioInit.BitsPerSample = AUDIO_RESOLUTION_16B;
     AudioInit.Volume        = 100;
@@ -31,7 +31,6 @@ int SOUND_INIT(void)
 
     // 2. Initialize Headphone/Speaker (Output)
     AudioInit.Device        = AUDIO_OUT_DEVICE_HEADPHONE;
-    AudioInit.ChannelsNbr   = AUDIO_CHANNELS;
     AudioInit.Volume        = 70;
 
     if(BSP_AUDIO_OUT_Init(0, &AudioInit) != BSP_ERROR_NONE)
